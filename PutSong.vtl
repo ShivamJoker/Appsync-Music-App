@@ -1,0 +1,23 @@
+## request mapping template
+
+#set( $songId = $util.autoUlid() )
+#set( $attrVal = $ctx.args.input )
+#set($attrVal.GSI1PK = "SONG")
+$util.qr($attrVal.put("GSI1SK", "SONG#${songId}"))
+{
+    "version" : "2018-05-29",
+    "operation" : "PutItem",
+    "key": {
+        "PK" : {"S": "USER#${ctx.identity.username}"},
+        "SK" : $util.dynamodb.toDynamoDBJson("SONG#${songId}")
+    },
+    "attributeValues" : $util.dynamodb.toMapValuesJson($ctx.args.input),
+}
+
+
+## response mapping template
+
+#set( $res = $ctx.result )
+#set($res.id = $res.SK.substring(5))
+
+$util.toJson({"result": $ctx.result})

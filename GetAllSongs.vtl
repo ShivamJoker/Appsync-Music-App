@@ -1,0 +1,29 @@
+## request mapping template
+
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "index": "GSI1-index",
+    "limit": $util.defaultIfNull(${ctx.args.pageSize}, 10),
+    "query" : {
+        ## Provide a query expression. **
+        "expression": "GSI1PK = :pk",
+        "expressionValues" : {
+        	":pk": {"S": "SONG"},
+        }
+    },
+    "nextToken": $util.toJson($util.defaultIfNullOrBlank($ctx.args.nextToken, null))
+}
+
+
+## response mapping template
+
+#set( $items = $ctx.result.items )
+#set( $newItems = [] )
+
+#foreach( $item in $items )
+	#set( $item.id =  $item.SK.substring(5))
+	$util.qr($newItems.add($item))
+#end
+
+$util.toJson({"nextToken":  $ctx.result.nextToken, "songs": $items })

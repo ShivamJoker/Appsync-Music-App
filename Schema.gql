@@ -1,0 +1,56 @@
+input ArtistInput {
+	name: String
+	id: String
+}
+
+type ArtistOutput {
+	name: String
+	id: String
+}
+
+enum GENRE {
+	POP
+	JAZZ
+	ROCK
+}
+
+type Mutation {
+	putSong(input: SongInput): Response
+}
+
+type Query {
+	getSongById(songId: String): SongOutput
+	getAllSongs(nextToken: String, pageSize: Int): allSongsOutput
+}
+
+type Response {
+	sucess: Boolean
+	result: AWSJSON
+}
+
+input SongInput {
+	title: String!
+	release_date: String!
+	artists: [ArtistInput!]!
+	lyrics: String
+	genre: GENRE
+}
+
+type SongOutput {
+	id: String
+	title: String
+	release_date: String
+	artists: [ArtistOutput]
+	lyrics: String
+	genre: GENRE
+}
+
+type allSongsOutput {
+	nextToken: String
+	songs: [SongOutput]
+}
+
+schema {
+	query: Query
+	mutation: Mutation
+}

@@ -1,0 +1,22 @@
+## request mapping template
+
+{
+    "version" : "2017-02-28",
+    "operation" : "Query",
+    "index": "GSI1-index",
+    "query" : {
+        ## Provide a query expression. **
+        "expression": "GSI1PK = :pk AND GSI1SK = :songId",
+        "expressionValues" : {
+        	":pk": {"S": "SONG"},
+            ":songId" : $util.dynamodb.toDynamoDBJson("SONG#${ctx.args.songId}")
+        }
+    }
+}
+
+
+## response mapping template
+
+#set( $song = $ctx.result.items.get(0) )
+#set($song.id = $song.SK.substring(5))
+$util.toJson($song)
